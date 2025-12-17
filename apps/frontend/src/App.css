@@ -177,3 +177,98 @@
   border: 0;
   display: block;
 }
+
+.gauge-card {
+  width: 100%;
+  max-width: 560px;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 10px 8px 20px;
+  box-sizing: border-box;
+}
+
+.gauge-wrapper {
+  position: relative;
+  width: 100%;
+  padding: 0 4px;
+}
+
+.gauge-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.gauge-track {
+  fill: none;
+  stroke: #f1f2f5;
+  stroke-width: 12;
+  stroke-linecap: round;
+}
+
+.gauge-fill {
+  fill: none;
+  stroke: #0d2b26;
+  stroke-width: 12;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.4s ease;
+}
+
+.gauge-scale {
+  font-size: 10px;
+  fill: #3b3b3b;
+  text-anchor: middle;
+}
+
+.gauge-scale.mid {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.gauge-scale.end {
+  text-anchor: end;
+}
+
+.gauge-value {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  pointer-events: none;
+}
+
+.gauge-percent {
+  font-size: 30px;
+  font-weight: 800;
+  color: #0d2b26;
+  margin-bottom: 6px;
+}
+
+.gauge-label {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0d2b26;
+}
+
+.report {
+  margin-top: 20px;
+  padding: 0 4px;
+  color: #1f2937;
+  line-height: 1.5;
+}
+
+.report h3 {
+  margin: 0 0 14px;
+  font-size: 18px;
+  font-weight: 800;
+  color: #2d2d2d;
+}
+
+.report p {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: #2f2f2f;
+}
