@@ -38,7 +38,7 @@ function ThreeLottieViewer() {
 
     const controls = new OrbitControls(camera, renderer.domElement)
     controls.autoRotate = true
-    controls.autoRotateSpeed = 2.4
+    controls.autoRotateSpeed = 5
     controls.enableDamping = true
 
     let mesh = null
@@ -66,7 +66,7 @@ function ThreeLottieViewer() {
     }
 
     const textTexture = createTextTexture(TEXT_LABEL)
-    const geometry = new RoundedBoxGeometry(0.7, 0.7, 0.7, 7, 0.18)
+    const geometry = new RoundedBoxGeometry(0.5, 0.5, 0.5, 7, 0.14)
     const material = new THREE.MeshStandardMaterial({
       roughness: 0.2,
       metalness: 0.05,
@@ -132,7 +132,7 @@ function App() {
 
   return (
     <main className="webview-layout" role="main">
-      <section className="webview-frame">
+      <section className={`webview-frame ${showSplash ? 'splash' : ''}`}>
         {showSplash ? (
           <ThreeLottieViewer />
         ) : (
