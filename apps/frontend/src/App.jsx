@@ -7,6 +7,13 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import './App.css'
 
 const TEXT_LABEL = 'juncci'
+const DEFAULT_REPORT = {
+  score: 63,
+  label: '편향도',
+  title: '# Report',
+  body:
+    '38kWh solar energy sold 38kWh solar energy sold 38kWh solar energy sold 38kWh solar energy sold 38kWh solar energy sold 38kWh solar energy sold 38kWh solar energy sold 38kWh solar energy sold 38kWh solar energy sold',
+}
 
 const extractYouTubeId = (url) => {
   try {
@@ -135,6 +142,59 @@ function ThreeLottieViewer() {
   )
 }
 
+function GaugeReport({ score = 0, label = '', title = '', body = '' }) {
+  const [displayScore, setDisplayScore] = useState(0)
+  const clampedScore = Math.max(0, Math.min(100, score))
+
+  useEffect(() => {
+    let rafId
+    const duration = 1200
+    const start = performance.now()
+
+    const tick = (now) => {
+      const elapsed = now - start
+      const progress = Math.min(1, elapsed / duration)
+      const eased = 1 - Math.pow(1 - progress, 3)
+      setDisplayScore(Math.round(clampedScore * eased))
+      if (progress < 1) {
+        rafId = requestAnimationFrame(tick)
+      }
+    }
+
+    rafId = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(rafId)
+  }, [clampedScore])
+
+  return (
+    <div className="gauge-card">
+      <div className="gauge-wrapper">
+        <svg viewBox="0 0 200 120" className="gauge-svg" role="img" aria-label={`${displayScore}%`}>
+          <path
+            d="M10 110 A90 90 0 0 1 190 110"
+            className="gauge-track"
+            pathLength="100"
+          />
+          <path
+            d="M10 110 A90 90 0 0 1 190 110"
+            className="gauge-fill"
+            pathLength="100"
+            strokeDasharray={`${displayScore} 100`}
+          />
+        </svg>
+        <div className="gauge-value">
+          <div className="gauge-percent">{displayScore}%</div>
+          <div className="gauge-label">{label}</div>
+        </div>
+      </div>
+
+      <div className="report">
+        <h3>{title}</h3>
+        <p>{body}</p>
+      </div>
+    </div>
+  )
+}
+
 function SplashPage() {
   const navigate = useNavigate()
 
@@ -224,6 +284,13 @@ function VideoPage() {
               loading="lazy"
             />
           </div>
+
+          <GaugeReport
+            score={DEFAULT_REPORT.score}
+            label={DEFAULT_REPORT.label}
+            title={DEFAULT_REPORT.title}
+            body={DEFAULT_REPORT.body}
+          />
         </div>
       </section>
     </main>
