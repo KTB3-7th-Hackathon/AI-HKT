@@ -180,9 +180,6 @@ function GaugeReport({ score = 0, label = '', title = '', body = '' }) {
             pathLength="100"
             strokeDasharray={`${displayScore} 100`}
           />
-          <text x="12" y="110" className="gauge-scale">0</text>
-          <text x="98" y="24" className="gauge-scale mid">50</text>
-          <text x="184" y="110" className="gauge-scale end">100</text>
         </svg>
         <div className="gauge-value">
           <div className="gauge-percent">{displayScore}%</div>

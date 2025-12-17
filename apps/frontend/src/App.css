@@ -190,6 +190,8 @@
 .gauge-wrapper {
   position: relative;
   width: 100%;
+  max-width: 380px;
+  margin: 0 auto;
   padding: 0 4px;
 }
 
@@ -201,32 +203,17 @@
 
 .gauge-track {
   fill: none;
-  stroke: #f1f2f5;
-  stroke-width: 12;
+  stroke: #e7e7e7;
+  stroke-width: 14;
   stroke-linecap: round;
 }
 
 .gauge-fill {
   fill: none;
-  stroke: #0d2b26;
-  stroke-width: 12;
+  stroke: #0a0a0a;
+  stroke-width: 14;
   stroke-linecap: round;
   transition: stroke-dasharray 0.4s ease;
-}
-
-.gauge-scale {
-  font-size: 10px;
-  fill: #3b3b3b;
-  text-anchor: middle;
-}
-
-.gauge-scale.mid {
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.gauge-scale.end {
-  text-anchor: end;
 }
 
 .gauge-value {
@@ -242,14 +229,14 @@
 .gauge-percent {
   font-size: 30px;
   font-weight: 800;
-  color: #0d2b26;
+  color: #0a0a0a;
   margin-bottom: 6px;
 }
 
 .gauge-label {
   font-size: 16px;
   font-weight: 700;
-  color: #0d2b26;
+  color: #0a0a0a;
 }
 
 .report {
