@@ -292,6 +292,10 @@ function VideoPage() {
             body={DEFAULT_REPORT.body}
           />
         </div>
+
+        <button className="floating-page-btn" type="button" aria-label="액션 버튼">
+          +
+        </button>
       </section>
     </main>
   )
