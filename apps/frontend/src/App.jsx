@@ -259,6 +259,7 @@ function VideoPage() {
   const { id } = useParams()
   const videoId = id || ''
   const navigate = useNavigate()
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
     if (!videoId) navigate('/service', { replace: true })
@@ -293,9 +294,40 @@ function VideoPage() {
           />
         </div>
 
-        <button className="floating-page-btn" type="button" aria-label="액션 버튼">
+        <button
+          className="floating-page-btn"
+          type="button"
+          aria-label="액션 버튼"
+          onClick={() => setIsModalOpen(true)}
+        >
           +
         </button>
+
+        {isModalOpen ? (
+          <div className="modal-overlay" role="dialog" aria-modal="true">
+            <div className="modal-card">
+              <div className="modal-header">
+                <h4>Modal Title</h4>
+                <button
+                  type="button"
+                  className="modal-close"
+                  aria-label="닫기"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  ×
+                </button>
+              </div>
+              <div className="modal-body">
+                <p>이곳에 필요한 내용을 넣어주세요. API 연동 시 데이터를 표시할 수 있습니다.</p>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="modal-action" onClick={() => setIsModalOpen(false)}>
+                  닫기
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
       </section>
     </main>
   )
