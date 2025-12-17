@@ -260,6 +260,19 @@ function VideoPage() {
   const videoId = id || ''
   const navigate = useNavigate()
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [chatInput, setChatInput] = useState('')
+
+  const dummyMessages = [
+    { role: 'bot', text: '안녕하세요! 무엇을 도와드릴까요?' },
+    { role: 'user', text: '이 영상에 대한 요약을 보고 싶어요.' },
+    { role: 'bot', text: '현재는 더미 응답입니다. 추후 API 연동 후 실제 답변을 제공할게요.' },
+    { role: 'user', text: '핵심 포인트 3가지만 알려줘.' },
+    { role: 'bot', text: '1) 출연자 소개\n2) 주요 장면 요약\n3) 마무리 멘트 정리 (더미)' },
+    { role: 'user', text: '감정 톤은 어떤가?' },
+    { role: 'bot', text: '대체로 밝고 유머러스한 분위기입니다. (더미)' },
+    { role: 'user', text: '결론 부분이 궁금해.' },
+    { role: 'bot', text: '결론에서는 출연자들이 주제를 다시 정리하며 마무리합니다. (더미)' },
+  ]
 
   useEffect(() => {
     if (!videoId) navigate('/service', { replace: true })
@@ -307,7 +320,7 @@ function VideoPage() {
           <div className="modal-overlay" role="dialog" aria-modal="true">
             <div className="modal-card">
               <div className="modal-header">
-                <h4>Modal Title</h4>
+                <h4>챗봇</h4>
                 <button
                   type="button"
                   className="modal-close"
@@ -318,12 +331,32 @@ function VideoPage() {
                 </button>
               </div>
               <div className="modal-body">
-                <p>이곳에 필요한 내용을 넣어주세요. API 연동 시 데이터를 표시할 수 있습니다.</p>
-              </div>
-              <div className="modal-footer">
-                <button type="button" className="modal-action" onClick={() => setIsModalOpen(false)}>
-                  닫기
-                </button>
+                <div className="chat-messages">
+                  {dummyMessages.map((msg, idx) => (
+                    <div
+                      key={idx}
+                      className={`chat-bubble ${msg.role === 'user' ? 'user' : 'bot'}`}
+                    >
+                      <span className="chat-text">{msg.text}</span>
+                    </div>
+                  ))}
+                </div>
+                <form
+                  className="chat-input"
+                  onSubmit={(e) => {
+                    e.preventDefault()
+                    // TODO: API 연동 시 전송 처리
+                  }}
+                >
+                  <input
+                    type="text"
+                    placeholder="메시지를 입력하세요"
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    aria-label="챗봇 입력"
+                  />
+                  <button type="submit">전송</button>
+                </form>
               </div>
             </div>
           </div>
