@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import * as THREE from 'three'
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js'
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js'
@@ -134,66 +135,83 @@ function ThreeLottieViewer() {
   )
 }
 
-function App() {
-  const [showSplash, setShowSplash] = useState(true)
+function SplashPage() {
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const timer = setTimeout(() => navigate('/service', { replace: true }), 3000)
+    return () => clearTimeout(timer)
+  }, [navigate])
+
+  return (
+    <main className="webview-layout splash-mode" role="main">
+      <section className="webview-frame splash">
+        <ThreeLottieViewer />
+      </section>
+    </main>
+  )
+}
+
+function ServicePage() {
   const [inputUrl, setInputUrl] = useState('')
   const [videoId, setVideoId] = useState('')
 
-  useEffect(() => {
-    const timer = setTimeout(() => setShowSplash(false), 3000)
-    return () => clearTimeout(timer)
-  }, [])
-
   return (
-    <main className={`webview-layout ${showSplash ? 'splash-mode' : ''}`} role="main">
-      <section className={`webview-frame ${showSplash ? 'splash' : ''}`}>
-        {showSplash ? (
-          <ThreeLottieViewer />
-        ) : (
-          <div className="main-content">
-            <header className="main-header">
-              <h2 className="brand">service</h2>
-              <div className="divider" />
-            </header>
+    <main className="webview-layout" role="main">
+      <section className="webview-frame">
+        <div className="main-content">
+          <header className="main-header">
+            <h2 className="brand">service</h2>
+            <div className="divider" />
+          </header>
 
-            {videoId ? (
-              <div className="video-wrapper">
-                <iframe
-                  title="YouTube player"
-                  src={`https://www.youtube.com/embed/${videoId}`}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                  loading="lazy"
-                />
-              </div>
-            ) : null}
-
-            <div className="hero-text">
-              <p className="label">키워드 문장</p>
-              <h1 className="headline">service</h1>
-            </div>
-
-            <form
-              className="input-form"
-              onSubmit={(e) => {
-                e.preventDefault()
-                const id = extractYouTubeId(inputUrl.trim())
-                setVideoId(id || '')
-              }}
-            >
-              <input
-                type="text"
-                name="url"
-                value={inputUrl}
-                onChange={(e) => setInputUrl(e.target.value)}
-                placeholder="url"
-                aria-label="url"
+          {videoId ? (
+            <div className="video-wrapper">
+              <iframe
+                title="YouTube player"
+                src={`https://www.youtube.com/embed/${videoId}`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                loading="lazy"
               />
-            </form>
+            </div>
+          ) : null}
+
+          <div className="hero-text">
+            <p className="label">키워드 문장</p>
+            <h1 className="headline">service</h1>
           </div>
-        )}
+
+          <form
+            className="input-form"
+            onSubmit={(e) => {
+              e.preventDefault()
+              const id = extractYouTubeId(inputUrl.trim())
+              setVideoId(id || '')
+            }}
+          >
+            <input
+              type="text"
+              name="url"
+              value={inputUrl}
+              onChange={(e) => setInputUrl(e.target.value)}
+              placeholder="url"
+              aria-label="url"
+            />
+          </form>
+        </div>
       </section>
     </main>
+  )
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<SplashPage />} />
+      <Route path="/service" element={<ServicePage />} />
+      <Route path="*" element={<Navigate to="/service" replace />} />
+    </Routes>
   )
 }
 
