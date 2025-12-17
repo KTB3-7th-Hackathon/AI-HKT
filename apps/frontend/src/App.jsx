@@ -259,12 +259,60 @@ function VideoPage() {
   const { id } = useParams()
   const videoId = id || ''
   const navigate = useNavigate()
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [chatInput, setChatInput] = useState('')
+  const [selectionPrompt, setSelectionPrompt] = useState({
+    text: '',
+    x: 0,
+    y: 0,
+    visible: false,
+  })
+  const reportRef = useRef(null)
+
+  const dummyMessages = [
+    { role: 'bot', text: '안녕하세요! 무엇을 도와드릴까요?' },
+    { role: 'user', text: '이 영상에 대한 요약을 보고 싶어요.' },
+    { role: 'bot', text: '현재는 더미 응답입니다. 추후 API 연동 후 실제 답변을 제공할게요.' },
+    { role: 'user', text: '핵심 포인트 3가지만 알려줘.' },
+    { role: 'bot', text: '1) 출연자 소개\n2) 주요 장면 요약\n3) 마무리 멘트 정리 (더미)' },
+    { role: 'user', text: '감정 톤은 어떤가?' },
+    { role: 'bot', text: '대체로 밝고 유머러스한 분위기입니다. (더미)' },
+    { role: 'user', text: '결론 부분이 궁금해.' },
+    { role: 'bot', text: '결론에서는 출연자들이 주제를 다시 정리하며 마무리합니다. (더미)' },
+  ]
 
   useEffect(() => {
     if (!videoId) navigate('/service', { replace: true })
   }, [videoId, navigate])
 
   if (!videoId) return null
+
+  const handleSelection = () => {
+    const selection = window.getSelection()
+    if (!selection || selection.isCollapsed) {
+      setSelectionPrompt((prev) => ({ ...prev, visible: false }))
+      return
+    }
+    const text = selection.toString().trim()
+    if (!text) {
+      setSelectionPrompt((prev) => ({ ...prev, visible: false }))
+      return
+    }
+    const range = selection.getRangeAt(0)
+    const rect = range.getBoundingClientRect()
+    const container = reportRef.current
+    if (!container) return
+    const containerRect = container.getBoundingClientRect()
+    const x = rect.left - containerRect.left + rect.width / 2
+    const y = rect.top - containerRect.top - 8
+    setSelectionPrompt({ text, x, y, visible: true })
+  }
+
+  const openChatWithText = (text) => {
+    setChatInput(text)
+    setIsModalOpen(true)
+    setSelectionPrompt((prev) => ({ ...prev, visible: false }))
+  }
 
   return (
     <main className="webview-layout" role="main">
@@ -291,7 +339,81 @@ function VideoPage() {
             title={DEFAULT_REPORT.title}
             body={DEFAULT_REPORT.body}
           />
+          <div
+            className="report"
+            ref={reportRef}
+            onMouseUp={handleSelection}
+            onTouchEnd={handleSelection}
+          >
+            <h3>{DEFAULT_REPORT.title}</h3>
+            <p>{DEFAULT_REPORT.body}</p>
+            {selectionPrompt.visible ? (
+              <div
+                className="selection-prompt"
+                style={{ left: selectionPrompt.x, top: selectionPrompt.y }}
+              >
+                <button type="button" onClick={() => openChatWithText(selectionPrompt.text)}>
+                  챗봇에 검색하시겠습니까?
+                </button>
+              </div>
+            ) : null}
+          </div>
         </div>
+
+        <button
+          className="floating-page-btn"
+          type="button"
+          aria-label="액션 버튼"
+          onClick={() => setIsModalOpen(true)}
+        >
+          +
+        </button>
+
+        {isModalOpen ? (
+          <div className="modal-overlay" role="dialog" aria-modal="true">
+            <div className="modal-card">
+              <div className="modal-header">
+                <h4>챗봇</h4>
+                <button
+                  type="button"
+                  className="modal-close"
+                  aria-label="닫기"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  ×
+                </button>
+              </div>
+              <div className="modal-body">
+                <div className="chat-messages">
+                  {dummyMessages.map((msg, idx) => (
+                    <div
+                      key={idx}
+                      className={`chat-bubble ${msg.role === 'user' ? 'user' : 'bot'}`}
+                    >
+                      <span className="chat-text">{msg.text}</span>
+                    </div>
+                  ))}
+                </div>
+                <form
+                  className="chat-input"
+                  onSubmit={(e) => {
+                    e.preventDefault()
+                    // TODO: API 연동 시 전송 처리
+                  }}
+                >
+                  <input
+                    type="text"
+                    placeholder="메시지를 입력하세요"
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    aria-label="챗봇 입력"
+                  />
+                  <button type="submit">전송</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        ) : null}
       </section>
     </main>
   )
