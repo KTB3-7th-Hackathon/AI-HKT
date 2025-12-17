@@ -7,6 +7,18 @@ import './App.css'
 
 const TEXT_LABEL = 'juncci'
 
+const extractYouTubeId = (url) => {
+  try {
+    const parsed = new URL(url)
+    if (parsed.hostname === 'youtu.be') return parsed.pathname.slice(1)
+    if (parsed.searchParams.get('v')) return parsed.searchParams.get('v')
+    if (parsed.pathname.startsWith('/embed/')) return parsed.pathname.split('/')[2]
+  } catch (e) {
+    return ''
+  }
+  return ''
+}
+
 function ThreeLottieViewer() {
   const mountRef = useRef(null)
 
@@ -124,6 +136,8 @@ function ThreeLottieViewer() {
 
 function App() {
   const [showSplash, setShowSplash] = useState(true)
+  const [inputUrl, setInputUrl] = useState('')
+  const [videoId, setVideoId] = useState('')
 
   useEffect(() => {
     const timer = setTimeout(() => setShowSplash(false), 3000)
@@ -142,13 +156,39 @@ function App() {
               <div className="divider" />
             </header>
 
+            {videoId ? (
+              <div className="video-wrapper">
+                <iframe
+                  title="YouTube player"
+                  src={`https://www.youtube.com/embed/${videoId}`}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  loading="lazy"
+                />
+              </div>
+            ) : null}
+
             <div className="hero-text">
               <p className="label">키워드 문장</p>
               <h1 className="headline">service</h1>
             </div>
 
-            <form className="input-form">
-              <input type="text" name="url" placeholder="url" aria-label="url" />
+            <form
+              className="input-form"
+              onSubmit={(e) => {
+                e.preventDefault()
+                const id = extractYouTubeId(inputUrl.trim())
+                setVideoId(id || '')
+              }}
+            >
+              <input
+                type="text"
+                name="url"
+                value={inputUrl}
+                onChange={(e) => setInputUrl(e.target.value)}
+                placeholder="url"
+                aria-label="url"
+              />
             </form>
           </div>
         )}
