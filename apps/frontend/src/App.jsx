@@ -261,6 +261,13 @@ function VideoPage() {
   const navigate = useNavigate()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [chatInput, setChatInput] = useState('')
+  const [selectionPrompt, setSelectionPrompt] = useState({
+    text: '',
+    x: 0,
+    y: 0,
+    visible: false,
+  })
+  const reportRef = useRef(null)
 
   const dummyMessages = [
     { role: 'bot', text: '안녕하세요! 무엇을 도와드릴까요?' },
@@ -279,6 +286,33 @@ function VideoPage() {
   }, [videoId, navigate])
 
   if (!videoId) return null
+
+  const handleSelection = () => {
+    const selection = window.getSelection()
+    if (!selection || selection.isCollapsed) {
+      setSelectionPrompt((prev) => ({ ...prev, visible: false }))
+      return
+    }
+    const text = selection.toString().trim()
+    if (!text) {
+      setSelectionPrompt((prev) => ({ ...prev, visible: false }))
+      return
+    }
+    const range = selection.getRangeAt(0)
+    const rect = range.getBoundingClientRect()
+    const container = reportRef.current
+    if (!container) return
+    const containerRect = container.getBoundingClientRect()
+    const x = rect.left - containerRect.left + rect.width / 2
+    const y = rect.top - containerRect.top - 8
+    setSelectionPrompt({ text, x, y, visible: true })
+  }
+
+  const openChatWithText = (text) => {
+    setChatInput(text)
+    setIsModalOpen(true)
+    setSelectionPrompt((prev) => ({ ...prev, visible: false }))
+  }
 
   return (
     <main className="webview-layout" role="main">
@@ -305,6 +339,25 @@ function VideoPage() {
             title={DEFAULT_REPORT.title}
             body={DEFAULT_REPORT.body}
           />
+          <div
+            className="report"
+            ref={reportRef}
+            onMouseUp={handleSelection}
+            onTouchEnd={handleSelection}
+          >
+            <h3>{DEFAULT_REPORT.title}</h3>
+            <p>{DEFAULT_REPORT.body}</p>
+            {selectionPrompt.visible ? (
+              <div
+                className="selection-prompt"
+                style={{ left: selectionPrompt.x, top: selectionPrompt.y }}
+              >
+                <button type="button" onClick={() => openChatWithText(selectionPrompt.text)}>
+                  챗봇에 검색하시겠습니까?
+                </button>
+              </div>
+            ) : null}
+          </div>
         </div>
 
         <button
