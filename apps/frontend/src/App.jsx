@@ -131,7 +131,7 @@ function App() {
   }, [])
 
   return (
-    <main className="webview-layout" role="main">
+    <main className={`webview-layout ${showSplash ? 'splash-mode' : ''}`} role="main">
       <section className={`webview-frame ${showSplash ? 'splash' : ''}`}>
         {showSplash ? (
           <ThreeLottieViewer />

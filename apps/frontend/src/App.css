@@ -7,6 +7,10 @@
   background: radial-gradient(circle at 20% 20%, #f2f6ff, #eef1f7 45%, #e5e9f0 100%);
 }
 
+.webview-layout.splash-mode {
+  padding: 0;
+}
+
 .webview-frame {
   width: 100%;
   max-width: 600px;
@@ -24,6 +28,11 @@
 
 .webview-frame.splash {
   padding: 0;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  max-width: none;
+  min-height: 100vh;
 }
 
 .webview-header h1 {
