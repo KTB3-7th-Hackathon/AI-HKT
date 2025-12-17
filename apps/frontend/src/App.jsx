@@ -137,8 +137,19 @@ function App() {
           <ThreeLottieViewer />
         ) : (
           <div className="main-content">
-            <h1>메인 페이지</h1>
-            <p>여기에 실제 앱 콘텐츠를 배치하세요.</p>
+            <header className="main-header">
+              <h2 className="brand">service</h2>
+              <div className="divider" />
+            </header>
+
+            <div className="hero-text">
+              <p className="label">키워드 문장</p>
+              <h1 className="headline">service</h1>
+            </div>
+
+            <form className="input-form">
+              <input type="text" name="url" placeholder="url" aria-label="url" />
+            </form>
           </div>
         )}
       </section>
