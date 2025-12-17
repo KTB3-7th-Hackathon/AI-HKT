@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useNavigate, useParams } from 'react-router-dom'
 import * as THREE from 'three'
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js'
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js'
@@ -154,7 +154,7 @@ function SplashPage() {
 
 function ServicePage() {
   const [inputUrl, setInputUrl] = useState('')
-  const [videoId, setVideoId] = useState('')
+  const navigate = useNavigate()
 
   return (
     <main className="webview-layout" role="main">
@@ -164,18 +164,6 @@ function ServicePage() {
             <h2 className="brand">service</h2>
             <div className="divider" />
           </header>
-
-          {videoId ? (
-            <div className="video-wrapper">
-              <iframe
-                title="YouTube player"
-                src={`https://www.youtube.com/embed/${videoId}`}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-                loading="lazy"
-              />
-            </div>
-          ) : null}
 
           <div className="hero-text">
             <p className="label">키워드 문장</p>
@@ -187,7 +175,9 @@ function ServicePage() {
             onSubmit={(e) => {
               e.preventDefault()
               const id = extractYouTubeId(inputUrl.trim())
-              setVideoId(id || '')
+              if (id) {
+                navigate(`/video/${id}`)
+              }
             }}
           >
             <input
@@ -205,11 +195,47 @@ function ServicePage() {
   )
 }
 
+function VideoPage() {
+  const { id } = useParams()
+  const videoId = id || ''
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (!videoId) navigate('/service', { replace: true })
+  }, [videoId, navigate])
+
+  if (!videoId) return null
+
+  return (
+    <main className="webview-layout" role="main">
+      <section className="webview-frame">
+        <div className="main-content">
+          <header className="main-header">
+            <h2 className="brand">service</h2>
+            <div className="divider" />
+          </header>
+
+          <div className="video-wrapper">
+            <iframe
+              title="YouTube player"
+              src={`https://www.youtube.com/embed/${videoId}`}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              loading="lazy"
+            />
+          </div>
+        </div>
+      </section>
+    </main>
+  )
+}
+
 function App() {
   return (
     <Routes>
       <Route path="/" element={<SplashPage />} />
       <Route path="/service" element={<ServicePage />} />
+      <Route path="/video/:id" element={<VideoPage />} />
       <Route path="*" element={<Navigate to="/service" replace />} />
     </Routes>
   )
