@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js'
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js'
@@ -38,7 +38,7 @@ function ThreeLottieViewer() {
 
     const controls = new OrbitControls(camera, renderer.domElement)
     controls.autoRotate = true
-    controls.autoRotateSpeed = 0.6
+    controls.autoRotateSpeed = 2.4
     controls.enableDamping = true
 
     let mesh = null
@@ -123,10 +123,24 @@ function ThreeLottieViewer() {
 }
 
 function App() {
+  const [showSplash, setShowSplash] = useState(true)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowSplash(false), 3000)
+    return () => clearTimeout(timer)
+  }, [])
+
   return (
     <main className="webview-layout" role="main">
       <section className="webview-frame">
-        <ThreeLottieViewer />
+        {showSplash ? (
+          <ThreeLottieViewer />
+        ) : (
+          <div className="main-content">
+            <h1>메인 페이지</h1>
+            <p>여기에 실제 앱 콘텐츠를 배치하세요.</p>
+          </div>
+        )}
       </section>
     </main>
   )
