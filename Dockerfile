@@ -25,7 +25,7 @@ RUN npm ci
 COPY apps/frontend/ .
 RUN npm run build
 
-# Frontend runtime
+# Frontend runtime.
 FROM nginx:1.27-alpine AS frontend
 COPY --from=frontend-build /app/dist /usr/share/nginx/html
 EXPOSE 80
