@@ -54,6 +54,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # ✅ github.repository를 소문자로 변환해서 GHCR 태그에 사용
+      - name: Set GHCR image repo (lowercase)
+        run: echo "IMAGE_REPO=ghcr.io/${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
+
       - name: Build and push backend image
         uses: docker/build-push-action@v5
         with:
@@ -62,8 +66,8 @@ jobs:
           target: backend
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}-backend:latest
-            ghcr.io/${{ github.repository }}-backend:${{ github.sha }}
+            ${{ env.IMAGE_REPO }}-backend:latest
+            ${{ env.IMAGE_REPO }}-backend:${{ github.sha }}
 
       - name: Build and push frontend image
         uses: docker/build-push-action@v5
@@ -73,5 +77,5 @@ jobs:
           target: frontend
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}-frontend:latest
-            ghcr.io/${{ github.repository }}-frontend:${{ github.sha }}
+            ${{ env.IMAGE_REPO }}-frontend:latest
+            ${{ env.IMAGE_REPO }}-frontend:${{ github.sha }}
