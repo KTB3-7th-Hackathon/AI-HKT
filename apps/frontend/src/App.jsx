@@ -261,6 +261,10 @@ function VideoPage() {
   const navigate = useNavigate()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [chatInput, setChatInput] = useState('')
+  const [chatMessages, setChatMessages] = useState([
+    { role: 'bot', text: '안녕하세요! 무엇을 도와드릴까요?' },
+  ])
+  const [isSending, setIsSending] = useState(false)
   const [selectionPrompt, setSelectionPrompt] = useState({
     text: '',
     x: 0,
@@ -268,22 +272,17 @@ function VideoPage() {
     visible: false,
   })
   const reportRef = useRef(null)
-
-  const dummyMessages = [
-    { role: 'bot', text: '안녕하세요! 무엇을 도와드릴까요?' },
-    { role: 'user', text: '이 영상에 대한 요약을 보고 싶어요.' },
-    { role: 'bot', text: '현재는 더미 응답입니다. 추후 API 연동 후 실제 답변을 제공할게요.' },
-    { role: 'user', text: '핵심 포인트 3가지만 알려줘.' },
-    { role: 'bot', text: '1) 출연자 소개\n2) 주요 장면 요약\n3) 마무리 멘트 정리 (더미)' },
-    { role: 'user', text: '감정 톤은 어떤가?' },
-    { role: 'bot', text: '대체로 밝고 유머러스한 분위기입니다. (더미)' },
-    { role: 'user', text: '결론 부분이 궁금해.' },
-    { role: 'bot', text: '결론에서는 출연자들이 주제를 다시 정리하며 마무리합니다. (더미)' },
-  ]
+  const chatMessagesRef = useRef(null)
 
   useEffect(() => {
     if (!videoId) navigate('/service', { replace: true })
   }, [videoId, navigate])
+
+  useEffect(() => {
+    const container = chatMessagesRef.current
+    if (!container) return
+    container.scrollTop = container.scrollHeight
+  }, [chatMessages])
 
   if (!videoId) return null
 
@@ -312,6 +311,41 @@ function VideoPage() {
     setChatInput(text)
     setIsModalOpen(true)
     setSelectionPrompt((prev) => ({ ...prev, visible: false }))
+  }
+
+  const appendMessage = (text, role) => {
+    setChatMessages((prev) => [...prev, { role, text }])
+  }
+
+  const sendMessage = async (rawText) => {
+    const text = rawText.trim()
+    if (!text || isSending) return
+
+    appendMessage(text, 'user')
+    setChatInput('')
+    setIsSending(true)
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          question: text,
+          biasResult: {
+            direction: '중립',
+            score: 0.5,
+            reason: 'UI 테스트',
+          },
+        }),
+      })
+      if (!res.ok) throw new Error('chat api failed')
+      const data = await res.json()
+      appendMessage(data?.answer || '응답을 가져오지 못했습니다.', 'bot')
+    } catch (e) {
+      appendMessage('오류가 발생했습니다.', 'bot')
+    } finally {
+      setIsSending(false)
+    }
   }
 
   return (
@@ -384,8 +418,8 @@ function VideoPage() {
                 </button>
               </div>
               <div className="modal-body">
-                <div className="chat-messages">
-                  {dummyMessages.map((msg, idx) => (
+                <div className="chat-messages" ref={chatMessagesRef}>
+                  {chatMessages.map((msg, idx) => (
                     <div
                       key={idx}
                       className={`chat-bubble ${msg.role === 'user' ? 'user' : 'bot'}`}
@@ -398,7 +432,7 @@ function VideoPage() {
                   className="chat-input"
                   onSubmit={(e) => {
                     e.preventDefault()
-                    // TODO: API 연동 시 전송 처리
+                    sendMessage(chatInput)
                   }}
                 >
                   <input
@@ -407,8 +441,11 @@ function VideoPage() {
                     value={chatInput}
                     onChange={(e) => setChatInput(e.target.value)}
                     aria-label="챗봇 입력"
+                    disabled={isSending}
                   />
-                  <button type="submit">전송</button>
+                  <button type="submit" disabled={isSending}>
+                    전송
+                  </button>
                 </form>
               </div>
             </div>
