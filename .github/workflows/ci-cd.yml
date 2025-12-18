@@ -78,6 +78,8 @@ jobs:
           file: ./Dockerfile
           target: frontend
           push: true
+          build-args: |
+            VITE_API_BASE_URL=http://43.201.10.244:8080
           tags: |
             ${{ env.IMAGE_REPO }}-frontend:latest
             ${{ env.IMAGE_REPO }}-frontend:${{ github.sha }}
