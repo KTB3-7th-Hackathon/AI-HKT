@@ -205,7 +205,64 @@ function ServicePage() {
   const [results, setResults] = useState([])
   const [isSearching, setIsSearching] = useState(false)
   const [searchError, setSearchError] = useState('')
+  const [inputMode, setInputMode] = useState('keyword')
   const navigate = useNavigate()
+
+  const handleModeChange = (mode) => {
+    setInputMode(mode)
+    setSearchError('')
+    setIsSearching(false)
+    if (mode === 'url') {
+      setResults([])
+    }
+  }
+
+  const isLikelyUrl = (value) => {
+    const trimmed = value.trim().toLowerCase()
+    if (!trimmed) return false
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) return true
+    return trimmed.startsWith('www.') || trimmed.includes('youtu.be') || trimmed.includes('youtube.com')
+  }
+
+  const extractYouTubeId = (value) => {
+    let candidate = value.trim()
+    if (!candidate) return ''
+    if (!/^https?:\/\//i.test(candidate)) {
+      if (candidate.startsWith('www.')) {
+        candidate = `https://${candidate}`
+      } else if (candidate.includes('youtu.be') || candidate.includes('youtube.com')) {
+        candidate = `https://${candidate}`
+      }
+    }
+
+    let url
+    try {
+      url = new URL(candidate)
+    } catch (error) {
+      return ''
+    }
+
+    const host = url.hostname.replace(/^www\./, '')
+    if (host === 'youtu.be') {
+      const id = url.pathname.split('/').filter(Boolean)[0] || ''
+      return id
+    }
+
+    if (host.endsWith('youtube.com')) {
+      if (url.pathname === '/watch') {
+        return url.searchParams.get('v') || ''
+      }
+      const pathParts = url.pathname.split('/').filter(Boolean)
+      if (pathParts[0] === 'shorts' || pathParts[0] === 'embed' || pathParts[0] === 'live') {
+        return pathParts[1] || ''
+      }
+      if (pathParts[0] === 'v') {
+        return pathParts[1] || ''
+      }
+    }
+
+    return ''
+  }
 
   const handleSearch = async (event) => {
     event.preventDefault()
@@ -214,6 +271,21 @@ function ServicePage() {
 
     setIsSearching(true)
     setSearchError('')
+
+    const shouldHandleUrl = inputMode === 'url' || isLikelyUrl(trimmed)
+    if (shouldHandleUrl) {
+      const videoId = extractYouTubeId(trimmed)
+      if (!videoId) {
+        setSearchError('유효한 유튜브 URL을 입력해주세요.')
+        setIsSearching(false)
+        return
+      }
+
+      setResults([])
+      setIsSearching(false)
+      navigate(`/video/${videoId}`)
+      return
+    }
 
     try {
       const res = await fetch(`/api/youtube/search?query=${encodeURIComponent(trimmed)}`)
@@ -238,8 +310,27 @@ function ServicePage() {
           </header>
 
           <div className="hero-text">
-            <p className="label">키워드 문장</p>
+            <p className="label">{inputMode === 'url' ? 'URL 입력' : '키워드 문장'}</p>
             <h1 className="headline">service</h1>
+          </div>
+
+          <div className="mode-toggle" role="tablist" aria-label="입력 모드">
+            <button
+              type="button"
+              className={inputMode === 'keyword' ? 'active' : ''}
+              onClick={() => handleModeChange('keyword')}
+              aria-pressed={inputMode === 'keyword'}
+            >
+              검색어
+            </button>
+            <button
+              type="button"
+              className={inputMode === 'url' ? 'active' : ''}
+              onClick={() => handleModeChange('url')}
+              aria-pressed={inputMode === 'url'}
+            >
+              URL
+            </button>
           </div>
 
           <form
@@ -251,36 +342,42 @@ function ServicePage() {
               name="query"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="검색어를 입력하세요"
-              aria-label="검색어"
+              placeholder={inputMode === 'url' ? '유튜브 URL을 입력하세요' : '검색어를 입력하세요'}
+              aria-label={inputMode === 'url' ? '유튜브 URL' : '검색어'}
             />
           </form>
           <div className="search-results">
             {isSearching ? <p className="search-status">검색 중...</p> : null}
             {searchError ? <p className="search-status error">{searchError}</p> : null}
-            {!isSearching && !searchError && results.length === 0 && query.trim().length > 0 ? (
+            {inputMode === 'keyword' &&
+            !isSearching &&
+            !searchError &&
+            results.length === 0 &&
+            query.trim().length > 0 ? (
               <p className="search-status">검색 결과가 없습니다.</p>
             ) : null}
-            {results.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                className="search-item"
-                onClick={() => navigate(`/video/${item.id}`)}
-              >
-                <div className="search-thumb">
-                  {item.thumbnailUrl ? (
-                    <img src={item.thumbnailUrl} alt={item.title} loading="lazy" />
-                  ) : (
-                    <div className="thumb-placeholder" />
-                  )}
-                </div>
-                <div className="search-meta">
-                  <h4>{item.title}</h4>
-                  <p>{item.channelTitle}</p>
-                </div>
-              </button>
-            ))}
+            {inputMode === 'keyword'
+              ? results.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    className="search-item"
+                    onClick={() => navigate(`/video/${item.id}`)}
+                  >
+                    <div className="search-thumb">
+                      {item.thumbnailUrl ? (
+                        <img src={item.thumbnailUrl} alt={item.title} loading="lazy" />
+                      ) : (
+                        <div className="thumb-placeholder" />
+                      )}
+                    </div>
+                    <div className="search-meta">
+                      <h4>{item.title}</h4>
+                      <p>{item.channelTitle}</p>
+                    </div>
+                  </button>
+                ))
+              : null}
           </div>
         </div>
       </section>

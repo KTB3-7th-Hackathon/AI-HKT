@@ -138,6 +138,36 @@
   letter-spacing: 0.01em;
 }
 
+.mode-toggle {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  gap: 8px;
+  background: #f3f4f6;
+  border-radius: 999px;
+  padding: 6px;
+  box-sizing: border-box;
+}
+
+.mode-toggle button {
+  flex: 1;
+  border: none;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #4b5563;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mode-toggle button.active {
+  background: #0d2b26;
+  color: #ffffff;
+  box-shadow: 0 8px 14px rgba(13, 43, 38, 0.18);
+}
+
 .input-form {
   width: 100%;
   display: flex;
