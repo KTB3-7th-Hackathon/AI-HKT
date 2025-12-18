@@ -17,9 +17,16 @@ COPY --from=backend-build /app/build/libs/*.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
 
-# Frontend runtime only
+# Frontend build
+FROM node:20-alpine AS frontend-build
+WORKDIR /app
+COPY apps/frontend/package*.json ./
+RUN npm ci
+COPY apps/frontend/ .
+RUN npm run build
+
+# Frontend runtime
 FROM nginx:1.27-alpine AS frontend
-COPY apps/frontend/dist /usr/share/nginx/html
+COPY --from=frontend-build /app/dist /usr/share/nginx/html
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
-
