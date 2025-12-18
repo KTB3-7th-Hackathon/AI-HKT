@@ -4,10 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
+import java.util.List;
+
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
-public class TranscriptRequest {
-    String url;
+public class FastApiResponse {
+    String text;
+    List<String> words;
+    int weight;
     String tag;
 }
