@@ -12,7 +12,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class OllamaChatService {
     private static final String OLLAMA_URL = "http://54.180.227.227:11434/api/chat";
-    private static final String MODEL = "qwen2.5:7b-instruct-q4_K_M";
+    private static final String MODEL = "llama3.1:8b-instruct-q4_K_M";
     private static final String SYSTEM_PROMPT =
             """
             너는 정치 용어와 정치 이념을 설명하는 중립적인 백과사전형 AI다.
