@@ -27,3 +27,6 @@ spring:
 
 youtube:
   api-key: ${YOUTUBE_API_KEY}
+
+fastapi:
+  base-url: http://localhost:8000
