@@ -15,18 +15,6 @@ const DEFAULT_REPORT = {
     '38kWh solar energy sold 38kWh solar energy sold 38kWh solar energy sold 38kWh solar energy sold 38kWh solar energy sold 38kWh solar energy sold 38kWh solar energy sold 38kWh solar energy sold 38kWh solar energy sold',
 }
 
-const extractYouTubeId = (url) => {
-  try {
-    const parsed = new URL(url)
-    if (parsed.hostname === 'youtu.be') return parsed.pathname.slice(1)
-    if (parsed.searchParams.get('v')) return parsed.searchParams.get('v')
-    if (parsed.pathname.startsWith('/embed/')) return parsed.pathname.split('/')[2]
-  } catch (e) {
-    return ''
-  }
-  return ''
-}
-
 function ThreeLottieViewer() {
   const mountRef = useRef(null)
 
@@ -213,8 +201,32 @@ function SplashPage() {
 }
 
 function ServicePage() {
-  const [inputUrl, setInputUrl] = useState('')
+  const [query, setQuery] = useState('')
+  const [results, setResults] = useState([])
+  const [isSearching, setIsSearching] = useState(false)
+  const [searchError, setSearchError] = useState('')
   const navigate = useNavigate()
+
+  const handleSearch = async (event) => {
+    event.preventDefault()
+    const trimmed = query.trim()
+    if (!trimmed || isSearching) return
+
+    setIsSearching(true)
+    setSearchError('')
+
+    try {
+      const res = await fetch(`/api/youtube/search?query=${encodeURIComponent(trimmed)}`)
+      if (!res.ok) throw new Error('search failed')
+      const data = await res.json()
+      setResults(Array.isArray(data) ? data : [])
+    } catch (e) {
+      setSearchError('검색 결과를 가져오지 못했습니다.')
+      setResults([])
+    } finally {
+      setIsSearching(false)
+    }
+  }
 
   return (
     <main className="webview-layout" role="main">
@@ -232,23 +244,44 @@ function ServicePage() {
 
           <form
             className="input-form"
-            onSubmit={(e) => {
-              e.preventDefault()
-              const id = extractYouTubeId(inputUrl.trim())
-              if (id) {
-                navigate(`/video/${id}`)
-              }
-            }}
+            onSubmit={handleSearch}
           >
             <input
               type="text"
-              name="url"
-              value={inputUrl}
-              onChange={(e) => setInputUrl(e.target.value)}
-              placeholder="url"
-              aria-label="url"
+              name="query"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="검색어를 입력하세요"
+              aria-label="검색어"
             />
           </form>
+          <div className="search-results">
+            {isSearching ? <p className="search-status">검색 중...</p> : null}
+            {searchError ? <p className="search-status error">{searchError}</p> : null}
+            {!isSearching && !searchError && results.length === 0 && query.trim().length > 0 ? (
+              <p className="search-status">검색 결과가 없습니다.</p>
+            ) : null}
+            {results.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                className="search-item"
+                onClick={() => navigate(`/video/${item.id}`)}
+              >
+                <div className="search-thumb">
+                  {item.thumbnailUrl ? (
+                    <img src={item.thumbnailUrl} alt={item.title} loading="lazy" />
+                  ) : (
+                    <div className="thumb-placeholder" />
+                  )}
+                </div>
+                <div className="search-meta">
+                  <h4>{item.title}</h4>
+                  <p>{item.channelTitle}</p>
+                </div>
+              </button>
+            ))}
+          </div>
         </div>
       </section>
     </main>
@@ -265,7 +298,6 @@ function VideoPage() {
     { role: 'bot', text: '안녕하세요! 무엇을 도와드릴까요?' },
   ])
   const [isSending, setIsSending] = useState(false)
-  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || ''
   const [selectionPrompt, setSelectionPrompt] = useState({
     text: '',
     x: 0,
@@ -327,11 +359,16 @@ function VideoPage() {
     setIsSending(true)
 
     try {
-      const res = await fetch(`${apiBaseUrl}/api/chat`, {
+      const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           question: text,
+          biasResult: {
+            direction: '중립',
+            score: 0.5,
+            reason: 'UI 테스트',
+          },
         }),
       })
       if (!res.ok) throw new Error('chat api failed')
