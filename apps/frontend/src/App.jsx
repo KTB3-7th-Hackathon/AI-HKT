@@ -395,6 +395,7 @@ function VideoPage() {
     { role: 'bot', text: '안녕하세요! 무엇을 도와드릴까요?' },
   ])
   const [isSending, setIsSending] = useState(false)
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || ''
   const [selectionPrompt, setSelectionPrompt] = useState({
     text: '',
     x: 0,
@@ -456,16 +457,11 @@ function VideoPage() {
     setIsSending(true)
 
     try {
-      const res = await fetch('/api/chat', {
+      const res = await fetch(`${apiBaseUrl}/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           question: text,
-          biasResult: {
-            direction: '중립',
-            score: 0.5,
-            reason: 'UI 테스트',
-          },
         }),
       })
       if (!res.ok) throw new Error('chat api failed')
