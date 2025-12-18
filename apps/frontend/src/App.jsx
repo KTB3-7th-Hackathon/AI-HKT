@@ -194,7 +194,9 @@ function SplashPage() {
   return (
     <main className="webview-layout splash-mode" role="main">
       <section className="webview-frame splash">
-        <ThreeLottieViewer />
+        <div className="splash-screen">
+          <img src="/splash.png" alt="splash" className="splash-image" />
+        </div>
       </section>
     </main>
   )
@@ -302,19 +304,27 @@ function ServicePage() {
 
   return (
     <main className="webview-layout" role="main">
-      <section className="webview-frame">
+      <section className="webview-frame" data-theme={inputMode}>
         <div className="main-content">
           <header className="main-header">
-            <h2 className="brand">service</h2>
+            <img className="logo-image logo-image--header" src="/logo.png" alt="service" />
             <div className="divider" />
           </header>
 
           <div className="hero-text">
-            <p className="label">{inputMode === 'url' ? 'URL 입력' : '키워드 문장'}</p>
-            <h1 className="headline">service</h1>
+            <div className="hero-motion" aria-hidden="true">
+              <img className="hero-swap hero-swap--first" src="/BG2.png" alt="" />
+              <img className="hero-swap hero-swap--second" src="/BG3.png" alt="" />
+              <img className="hero-swap hero-swap--third" src="/BG4.png" alt="" />
+            </div>
           </div>
 
-          <div className="mode-toggle" role="tablist" aria-label="입력 모드">
+          <div
+            className="mode-toggle"
+            role="tablist"
+            aria-label="입력 모드"
+            style={{ '--toggle-offset': inputMode === 'url' ? '100%' : '0%' }}
+          >
             <button
               type="button"
               className={inputMode === 'keyword' ? 'active' : ''}
@@ -345,6 +355,23 @@ function ServicePage() {
               placeholder={inputMode === 'url' ? '유튜브 URL을 입력하세요' : '검색어를 입력하세요'}
               aria-label={inputMode === 'url' ? '유튜브 URL' : '검색어'}
             />
+            <button className="search-button" type="submit" aria-label="검색">
+              <svg
+                data-slot="icon"
+                fill="none"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+                />
+              </svg>
+            </button>
           </form>
           <div className="search-results">
             {isSearching ? <p className="search-status">검색 중...</p> : null}
