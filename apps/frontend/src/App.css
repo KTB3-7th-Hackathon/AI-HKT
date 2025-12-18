@@ -23,9 +23,25 @@
   border-radius: 0;
   border: none;
   box-shadow: none;
-  padding: 40px 28px 60px;
+  padding: 0;
   box-sizing: border-box;
   position: relative;
+}
+
+.webview-frame[data-theme='keyword'] {
+  --accent: #7c3aed;
+  --accent-soft: #f5f3ff;
+  --accent-border: #e9d5ff;
+  --accent-text: #6b21a8;
+  --accent-shadow: rgba(124, 58, 237, 0.28);
+}
+
+.webview-frame[data-theme='url'] {
+  --accent: #a855f7;
+  --accent-soft: #fdf2ff;
+  --accent-border: #f0abfc;
+  --accent-text: #86198f;
+  --accent-shadow: rgba(168, 85, 247, 0.28);
 }
 
 .webview-frame.splash {
@@ -36,6 +52,23 @@
   max-width: 600px;
   width: 600px;
   min-height: 100vh;
+}
+
+.splash-screen {
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #681993;
+}
+
+.splash-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
 .webview-header h1 {
@@ -81,7 +114,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 28px;
+  gap: 20px;
   width: 100%;
   box-sizing: border-box;
 }
@@ -97,8 +130,23 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 10px;
+  gap: 6px;
+  margin-bottom: 0;
+  padding: 6px 0 8px;
+  box-shadow: 0 12px 24px rgba(13, 43, 38, 0.08);
+  border-radius: 0 0 24px 24px;
+  overflow: visible;
+}
+
+.logo-image {
+  width: min(80vw, 400px);
+  height: auto;
+  max-width: 100%;
+  display: block;
+}
+
+.logo-image--header {
+  width: min(34vw, 150px);
 }
 
 .brand {
@@ -110,19 +158,9 @@
 }
 
 .divider {
-  width: 92%;
-  height: 2px;
-  background: #0d2b26;
-  border-radius: 999px;
+  display: none;
 }
 
-.hero-text {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  margin-top: 8px;
-}
 
 .label {
   margin: 0;
@@ -143,53 +181,128 @@
   max-width: 360px;
   display: flex;
   gap: 8px;
-  background: #f3f4f6;
+  background: var(--accent-soft, #f8f5ff);
+  border: 1px solid var(--accent-border, #e9d5ff);
   border-radius: 999px;
-  padding: 6px;
+  padding: 8px;
   box-sizing: border-box;
+  animation: toggle-pop 0.4s ease-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.mode-toggle::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: calc(50% - 8px);
+  height: calc(100% - 16px);
+  background: var(--accent, #7c3aed);
+  border-radius: 999px;
+  transform: translateX(var(--toggle-offset, 0%));
+  transition: transform 0.3s ease;
+  box-shadow: 0 10px 18px var(--accent-shadow, rgba(124, 58, 237, 0.28));
 }
 
 .mode-toggle button {
   flex: 1;
   border: none;
   border-radius: 999px;
-  padding: 8px 14px;
-  font-size: 13px;
+  padding: 10px 16px;
+  font-size: 17px;
   font-weight: 700;
-  color: #4b5563;
+  color: var(--accent-text, #6b21a8);
   background: transparent;
   cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+  transition: background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+  position: relative;
+  z-index: 1;
 }
 
 .mode-toggle button.active {
-  background: #0d2b26;
   color: #ffffff;
-  box-shadow: 0 8px 14px rgba(13, 43, 38, 0.18);
+  transform: translateY(-1px);
 }
+
+@keyframes toggle-pop {
+  0% {
+    transform: translateY(6px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 
 .input-form {
   width: 100%;
   display: flex;
   justify-content: center;
   margin-top: 6px;
+  gap: 10px;
+  padding: 0 16px;
+  box-sizing: border-box;
+  position: relative;
 }
 
 .input-form input[type='text'] {
-  width: 100%;
-  max-width: 520px;
+  flex: 1;
+  min-width: 0;
+  max-width: 440px;
   height: 54px;
-  padding: 0 16px;
-  border: 1.8px solid #0d2b26;
+  padding: 0 56px 0 16px;
+  border: 1.8px solid var(--accent-border, #d8b4fe);
   border-radius: 14px;
   font-size: 15px;
-  color: #0d2b26;
+  color: var(--accent-text, #6b21a8);
   background: #ffffff;
   outline: none;
+  box-shadow: 0 10px 18px color-mix(in srgb, var(--accent, #7c3aed) 12%, transparent);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .input-form input::placeholder {
-  color: #b0b0b0;
+  color: color-mix(in srgb, var(--accent, #7c3aed) 40%, #ffffff);
+}
+
+.input-form input[type='text']:focus {
+  border-color: var(--accent, #7c3aed);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent, #7c3aed) 28%, transparent);
+}
+
+.search-button {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: var(--accent, #7c3aed);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12px 20px color-mix(in srgb, var(--accent, #7c3aed) 40%, transparent);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  position: absolute;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.search-button svg {
+  width: 22px;
+  height: 22px;
+}
+
+.search-button:active {
+  transform: translateY(-50%) scale(0.96);
+}
+
+.search-button:hover {
+  filter: brightness(1.05);
 }
 
 .search-results {
@@ -525,4 +638,75 @@
   font-size: 13px;
   cursor: pointer;
   padding: 0;
+}
+.hero-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  margin-bottom: 12px;
+}
+
+.hero-motion {
+  width: min(72vw, 380px);
+  position: relative;
+  height: auto;
+}
+
+.hero-motion::before {
+  content: '';
+  position: absolute;
+  inset: -12px;
+  background: radial-gradient(circle at 50% 40%, rgba(139, 92, 246, 0.35), rgba(139, 92, 246, 0) 70%);
+  filter: blur(6px);
+  z-index: 0;
+}
+
+.hero-swap {
+  width: min(72vw, 380px);
+  height: auto;
+  display: block;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-swap--first {
+  position: relative;
+  opacity: 0;
+  animation: hero-swap 9s ease-in-out infinite;
+}
+
+.hero-swap--second {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  animation: hero-swap 9s ease-in-out infinite;
+  animation-delay: 3s;
+}
+
+.hero-swap--third {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  animation: hero-swap 9s ease-in-out infinite;
+  animation-delay: 6s;
+}
+
+@keyframes hero-swap {
+  0% {
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  28% {
+    opacity: 1;
+  }
+  36% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
 }
