@@ -4,7 +4,7 @@ spring:
 
   datasource:
     url: ${DB_URL}
-    username: root
+    username: juncci_user
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
@@ -24,6 +24,7 @@ spring:
     level:
       org.hibernate.SQL: off
       org.hibernate.orm.jdbc.bind: off
+
 
 youtube:
   api-key: ${YOUTUBE_API_KEY}
