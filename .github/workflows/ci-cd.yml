@@ -94,20 +94,26 @@ jobs:
             set -e
             cd ${{ secrets.DEPLOY_PATH }}
 
-            echo "[1/6] Docker login to GHCR"
+            echo "[0/7] Check .env exists"
+            ls -al .env || true
+
+            echo "[1/7] Docker login to GHCR"
             echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
 
-            echo "[2/6] Pull latest images"
+            echo "[2/7] Pull latest images"
             docker compose pull
 
-            echo "[3/6] Recreate containers (force)"
+            echo "[3/7] Recreate containers (force)"
             docker compose up -d --remove-orphans --pull always --force-recreate
 
-            echo "[4/6] Show running containers"
+            echo "[4/7] Show running containers"
             docker ps
 
-            echo "[5/6] Show compose status"
+            echo "[5/7] Show compose status"
             docker compose ps
 
-            echo "[6/6] Show last logs (quick check)"
+            echo "[6/7] Show last logs (backend)"
             docker logs hkt-backend --tail 50 || true
+
+            echo "[7/7] Show last logs (ai)"
+            docker logs hkt-ai --tail 50 || true
