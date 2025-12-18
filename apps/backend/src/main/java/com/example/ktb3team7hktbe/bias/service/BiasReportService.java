@@ -12,6 +12,7 @@ import org.springframework.web.client.RestClient;
 public class BiasReportService {
 
     private final RestClient restClient;
+    private final String fastApiUrl;
 
     public BiasReportService(@Value("${fastapi.base-url}") String fastApiBaseUrl) {
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
@@ -22,12 +23,14 @@ public class BiasReportService {
                 .requestFactory(requestFactory)
                 .baseUrl(fastApiBaseUrl)
                 .build();
+
+        this.fastApiUrl = fastApiBaseUrl;
     }
 
     public FastApiResponse analyzeVideo(TranscriptRequest request) {
 
         return restClient.post()
-                .uri("/analyze")
+                .uri(this.fastApiUrl + "/api/report")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(request)
                 .retrieve()
