@@ -10,10 +10,117 @@ const TEXT_LABEL = 'juncci'
 const DEFAULT_REPORT = {
   score: 63,
   label: '편향도',
-  title: '# Report',
-  body:
-    '38kWh solar energy sold 38kWh solar energy sold 38kWh solar energy sold 38kWh solar energy sold 38kWh solar energy sold 38kWh solar energy sold 38kWh solar energy sold 38kWh solar energy sold 38kWh solar energy sold',
+  title: '분석 리포트',
+  reportText:
+    '내란특검은 김건희 씨의 비상계엄 선포 관여 의혹이 사실이 아니라고 결론 내렸으며, 박지영 특검보는 관련 증거가 없다고 밝혔습니다.\n김씨가 명태균 사건 등에 개입한 사실은 있으나, 비상 선포에 관여하거나 주요 원인은 아니었다고 설명했습니다.\n오히려 특검은 김씨가 계엄 선포 이후 윤 전 대통령과 "너 때문에 망했다"고 말하며 격렬히 다퉜다는 진술을 확보했습니다.',
+  words: [
+    '특검은 이와 함께 계엄 선포 이후 김씨가 윤 전 대통령과 심하게 싸웠다는 진술도 확보했다고 밝혔습니다.',
+    '그러면서 김씨의 계엄 당시 행적뿐만 아니라 주변인 진술 등을 봐도 계엄에 관여했다는 증거가 발견되지 않았다고 설명했습니다.',
+  ],
 }
+
+const LOADING_QUIZZES = [
+  {
+    question: '자신의 생각과 같은 정보만 믿는 경향은 확증 편향이다.',
+    answer: 'O',
+    explanation: '내 생각을 확인해주는 정보만 찾는 경향을 말해요.',
+  },
+  {
+    question: '반대 의견을 먼저 찾아보는 것은 확증 편향을 줄이는 데 도움이 된다.',
+    answer: 'O',
+    explanation: '다른 관점을 보는 것이 편향을 줄여요.',
+  },
+  {
+    question: '사실 확인보다 감정에 맞는 정보가 더 설득력 있게 느껴질 수 있다.',
+    answer: 'O',
+    explanation: '감정은 판단을 쉽게 흔들 수 있어요.',
+  },
+  {
+    question: '필터 버블은 내가 본 적 없는 다양한 정보가 더 많이 보이게 한다.',
+    answer: 'X',
+    explanation: '비슷한 정보만 더 많이 보이게 만들어요.',
+  },
+  {
+    question: '추천 알고리즘은 사용자의 관심을 더 강화할 수 있다.',
+    answer: 'O',
+    explanation: '비슷한 콘텐츠가 반복 추천될 수 있어요.',
+  },
+  {
+    question: '모든 뉴스는 완전히 중립적이다.',
+    answer: 'X',
+    explanation: '관점이 섞일 수 있어요.',
+  },
+  {
+    question: '같은 사건도 매체마다 표현이 다를 수 있다.',
+    answer: 'O',
+    explanation: '관점과 표현 방식이 달라요.',
+  },
+  {
+    question: '제목만 보고 판단하면 오해가 생길 수 있다.',
+    answer: 'O',
+    explanation: '본문 맥락이 중요해요.',
+  },
+  {
+    question: '내가 보고 싶은 정보만 보면 관점이 좁아질 수 있다.',
+    answer: 'O',
+    explanation: '다양한 정보가 필요해요.',
+  },
+  {
+    question: '사실과 의견은 항상 구분해서 볼 필요가 없다.',
+    answer: 'X',
+    explanation: '사실과 의견은 구분이 중요해요.',
+  },
+  {
+    question: '댓글 반응만으로 뉴스의 사실 여부를 판단할 수 있다.',
+    answer: 'X',
+    explanation: '댓글은 감정적일 수 있어요.',
+  },
+  {
+    question: '같은 숫자라도 문맥에 따라 의미가 달라질 수 있다.',
+    answer: 'O',
+    explanation: '맥락이 해석을 바꿔요.',
+  },
+  {
+    question: '출처가 불분명한 정보는 조심해서 봐야 한다.',
+    answer: 'O',
+    explanation: '출처 확인이 기본이에요.',
+  },
+  {
+    question: '정보를 공유하기 전에 사실 확인을 하는 것이 좋다.',
+    answer: 'O',
+    explanation: '잘못된 정보 확산을 막아요.',
+  },
+  {
+    question: '내 생각과 다른 정보도 한 번은 살펴볼 가치가 있다.',
+    answer: 'O',
+    explanation: '시야를 넓히는 데 도움이 돼요.',
+  },
+  {
+    question: '한두 개의 사례로 전체를 판단하는 것은 위험하다.',
+    answer: 'O',
+    explanation: '전체 맥락을 봐야 해요.',
+  },
+  {
+    question: '숫자와 통계는 언제나 완전히 객관적이다.',
+    answer: 'X',
+    explanation: '해석 방식에 따라 달라질 수 있어요.',
+  },
+  {
+    question: '감정이 강한 표현은 판단을 흐릴 수 있다.',
+    answer: 'O',
+    explanation: '감정적 언어는 주의를 필요로 해요.',
+  },
+  {
+    question: '사실을 확인하려면 여러 출처를 비교하는 것이 좋다.',
+    answer: 'O',
+    explanation: '교차 확인이 도움이 돼요.',
+  },
+  {
+    question: '내가 자주 보는 콘텐츠만이 전체 현실을 대표한다.',
+    answer: 'X',
+    explanation: '부분만 보고 있을 수 있어요.',
+  },
+]
 
 function ThreeLottieViewer() {
   const mountRef = useRef(null)
@@ -157,6 +264,13 @@ function GaugeReport({ score = 0, label = '', title = '', body = '' }) {
     <div className="gauge-card">
       <div className="gauge-wrapper">
         <svg viewBox="0 0 200 120" className="gauge-svg" role="img" aria-label={`${displayScore}%`}>
+          <defs>
+            <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#c084fc" />
+              <stop offset="50%" stopColor="#8b5cf6" />
+              <stop offset="100%" stopColor="#6d28d9" />
+            </linearGradient>
+          </defs>
           <path
             d="M10 110 A90 90 0 0 1 190 110"
             className="gauge-track"
@@ -175,10 +289,12 @@ function GaugeReport({ score = 0, label = '', title = '', body = '' }) {
         </div>
       </div>
 
-      <div className="report">
-        <h3>{title}</h3>
-        <p>{body}</p>
-      </div>
+      {body ? (
+        <div className="report">
+          <h3>{title}</h3>
+          <p>{body}</p>
+        </div>
+      ) : null}
     </div>
   )
 }
@@ -208,6 +324,7 @@ function ServicePage() {
   const [isSearching, setIsSearching] = useState(false)
   const [searchError, setSearchError] = useState('')
   const [inputMode, setInputMode] = useState('keyword')
+  const [selectedTopic, setSelectedTopic] = useState('')
   const navigate = useNavigate()
 
   const handleModeChange = (mode) => {
@@ -285,7 +402,7 @@ function ServicePage() {
 
       setResults([])
       setIsSearching(false)
-      navigate(`/video/${videoId}`)
+      navigate(`/loading/${videoId}`)
       return
     }
 
@@ -373,6 +490,19 @@ function ServicePage() {
               </svg>
             </button>
           </form>
+          <div className="filter-buttons" role="group" aria-label="주제 선택">
+            {['정치', '젠더', '세대', '지역'].map((topic) => (
+              <button
+                key={topic}
+                type="button"
+                className={`filter-button${selectedTopic === topic ? ' active' : ''}`}
+                aria-pressed={selectedTopic === topic}
+                onClick={() => setSelectedTopic(topic)}
+              >
+                {topic}
+              </button>
+            ))}
+          </div>
           <div className="search-results">
             {isSearching ? <p className="search-status">검색 중...</p> : null}
             {searchError ? <p className="search-status error">{searchError}</p> : null}
@@ -389,7 +519,7 @@ function ServicePage() {
                     key={item.id}
                     type="button"
                     className="search-item"
-                    onClick={() => navigate(`/video/${item.id}`)}
+                    onClick={() => navigate(`/loading/${item.id}`)}
                   >
                     <div className="search-thumb">
                       {item.thumbnailUrl ? (
@@ -506,7 +636,7 @@ function VideoPage() {
       <section className="webview-frame">
         <div className="main-content">
           <header className="main-header">
-            <h2 className="brand">service</h2>
+            <img className="logo-image logo-image--header" src="/logo.png" alt="service" />
             <div className="divider" />
           </header>
 
@@ -524,16 +654,23 @@ function VideoPage() {
             score={DEFAULT_REPORT.score}
             label={DEFAULT_REPORT.label}
             title={DEFAULT_REPORT.title}
-            body={DEFAULT_REPORT.body}
+            body=""
           />
-          <div
-            className="report"
+          <details
+            className="report-card"
             ref={reportRef}
             onMouseUp={handleSelection}
             onTouchEnd={handleSelection}
           >
-            <h3>{DEFAULT_REPORT.title}</h3>
-            <p>{DEFAULT_REPORT.body}</p>
+            <summary className="report-title">
+              <img className="report-icon" src="/component.png" alt="" />
+              {DEFAULT_REPORT.title}
+            </summary>
+            <div className="report-body">
+              {DEFAULT_REPORT.reportText.split('\n').map((line, index) => (
+                <p key={`${index}-${line.slice(0, 8)}`}>{line}</p>
+              ))}
+            </div>
             {selectionPrompt.visible ? (
               <div
                 className="selection-prompt"
@@ -544,23 +681,34 @@ function VideoPage() {
                 </button>
               </div>
             ) : null}
-          </div>
+          </details>
+          <details className="report-card report-card--words" aria-label="편향 문장">
+            <summary className="report-title">
+              <img className="report-icon" src="/component.png" alt="" />
+              편향 문장
+            </summary>
+            <ul className="report-list">
+              {DEFAULT_REPORT.words.map((sentence) => (
+                <li key={sentence}>{sentence}</li>
+              ))}
+            </ul>
+          </details>
         </div>
 
         <button
           className="floating-page-btn"
           type="button"
-          aria-label="액션 버튼"
+          aria-label="챗봇 열기"
           onClick={() => setIsModalOpen(true)}
         >
-          +
+          <img src="/component2.png" alt="" />
         </button>
 
         {isModalOpen ? (
           <div className="modal-overlay" role="dialog" aria-modal="true">
             <div className="modal-card">
               <div className="modal-header">
-                <h4>챗봇</h4>
+                <h4>RE:spect</h4>
                 <button
                   type="button"
                   className="modal-close"
@@ -609,11 +757,95 @@ function VideoPage() {
   )
 }
 
+function LoadingPage() {
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const [selection, setSelection] = useState('')
+  const [quizIndex, setQuizIndex] = useState(0)
+  const [isCorrect, setIsCorrect] = useState(null)
+  const nextQuizTimeoutRef = useRef(null)
+
+  useEffect(() => {
+    setQuizIndex(Math.floor(Math.random() * LOADING_QUIZZES.length))
+    const timer = setTimeout(() => {
+      if (id) navigate(`/video/${id}`)
+    }, 10000)
+    return () => clearTimeout(timer)
+  }, [id, navigate])
+
+  useEffect(() => {
+    setSelection('')
+    setIsCorrect(null)
+  }, [quizIndex])
+
+  useEffect(() => {
+    return () => {
+      if (nextQuizTimeoutRef.current) clearTimeout(nextQuizTimeoutRef.current)
+    }
+  }, [])
+
+  const quiz = LOADING_QUIZZES[quizIndex]
+  const hasAnswered = selection !== ''
+
+  const pickNextQuiz = () => {
+    if (LOADING_QUIZZES.length <= 1) return quizIndex
+    let nextIndex = quizIndex
+    while (nextIndex === quizIndex) {
+      nextIndex = Math.floor(Math.random() * LOADING_QUIZZES.length)
+    }
+    return nextIndex
+  }
+
+  const handleAnswer = (option) => {
+    if (hasAnswered) return
+    setSelection(option)
+    setIsCorrect(option === quiz.answer)
+    if (nextQuizTimeoutRef.current) clearTimeout(nextQuizTimeoutRef.current)
+    nextQuizTimeoutRef.current = setTimeout(() => {
+      setQuizIndex(pickNextQuiz())
+    }, 1200)
+  }
+
+  return (
+    <main className="webview-layout loading-mode" role="main">
+      <section className="webview-frame loading">
+        <div className="loading-card">
+          <div className="loading-title">로딩 중...</div>
+          <p className="loading-subtitle">확증 편향에 대해 알고 있나요?</p>
+          <div className="quiz-card">
+            <p className="quiz-question">{quiz.question}</p>
+            <div className="quiz-actions" role="group" aria-label="퀴즈 선택">
+              {['O', 'X'].map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  className={`quiz-button${selection === option ? ' active' : ''}`}
+                  onClick={() => handleAnswer(option)}
+                  disabled={hasAnswered}
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+            {isCorrect !== null ? (
+              <div className={`quiz-result ${isCorrect ? 'correct' : 'wrong'}`}>
+                {isCorrect ? '정답입니다.' : '오답입니다.'} {quiz.explanation}
+              </div>
+            ) : null}
+          </div>
+          <div className="loading-note">10초 후 자동으로 영상으로 이동합니다.</div>
+        </div>
+      </section>
+    </main>
+  )
+}
+
 function App() {
   return (
     <Routes>
       <Route path="/" element={<SplashPage />} />
       <Route path="/service" element={<ServicePage />} />
+      <Route path="/loading/:id" element={<LoadingPage />} />
       <Route path="/video/:id" element={<VideoPage />} />
       <Route path="*" element={<Navigate to="/service" replace />} />
     </Routes>
