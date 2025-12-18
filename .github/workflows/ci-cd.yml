@@ -54,7 +54,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # ✅ github.repository를 소문자로 변환해서 GHCR 태그에 사용
       - name: Set GHCR image repo (lowercase)
         run: echo "IMAGE_REPO=ghcr.io/${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
 
@@ -79,3 +78,36 @@ jobs:
           tags: |
             ${{ env.IMAGE_REPO }}-frontend:latest
             ${{ env.IMAGE_REPO }}-frontend:${{ github.sha }}
+
+  deploy:
+    needs: docker
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Deploy to EC2 via SSH (compose pull & up)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            set -e
+            cd ${{ secrets.DEPLOY_PATH }}
+
+            echo "[1/6] Docker login to GHCR"
+            echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
+
+            echo "[2/6] Pull latest images"
+            docker compose pull
+
+            echo "[3/6] Recreate containers (force)"
+            docker compose up -d --remove-orphans --pull always --force-recreate
+
+            echo "[4/6] Show running containers"
+            docker ps
+
+            echo "[5/6] Show compose status"
+            docker compose ps
+
+            echo "[6/6] Show last logs (quick check)"
+            docker logs hkt-backend --tail 50 || true
