@@ -29,4 +29,4 @@ youtube:
   api-key: ${YOUTUBE_API_KEY}
 
 fastapi:
-  base-url: http://localhost:8000
+  base-url: ${FASTAPI_BASE_URL:http://ai:8000}
