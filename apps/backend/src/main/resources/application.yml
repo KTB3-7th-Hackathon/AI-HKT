@@ -24,3 +24,9 @@ spring:
     level:
       org.hibernate.SQL: off
       org.hibernate.orm.jdbc.bind: off
+
+youtube:
+  api-key: ${YOUTUBE_API_KEY}
+
+fastapi:
+  base-url: ${FASTAPI_BASE_URL:http://ai:8000}

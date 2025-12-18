@@ -35,7 +35,11 @@ public class ReportViewAssembler {
         List<OppositeVideos> videos = oppositeVideosRepository.findFirst2ByTagAndBiasBetween(tag, minBias, maxBias);
         List<String> urls = videos.stream().map(OppositeVideos::getUrl).toList();
 
-        return new ReportResponse(fastApiResponse.getText(), fastApiResponse.getWeight(),
-                fastApiResponse.getWords(), urls);
+        return ReportResponse.builder()
+                .report(fastApiResponse.getText())
+                .bias(fastApiResponse.getWeight())
+                .words(fastApiResponse.getWords())
+                .urls(urls)
+                .build();
     }
 }
