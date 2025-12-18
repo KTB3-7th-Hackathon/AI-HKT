@@ -84,7 +84,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
-      - name: Deploy to EC2 via SSH (compose pull & up)
+      - name: Deploy backend/frontend only (compose pull & up)
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.DEPLOY_HOST }}
@@ -94,26 +94,23 @@ jobs:
             set -e
             cd ${{ secrets.DEPLOY_PATH }}
 
-            echo "[0/7] Check .env exists"
+            echo "[0/6] Check .env exists"
             ls -al .env || true
 
-            echo "[1/7] Docker login to GHCR"
+            echo "[1/6] Docker login to GHCR"
             echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
 
-            echo "[2/7] Pull latest images"
-            docker compose pull
+            echo "[2/6] Pull latest images (backend/frontend only)"
+            docker compose pull backend frontend
 
-            echo "[3/7] Recreate containers (force)"
-            docker compose up -d --remove-orphans --pull always --force-recreate
+            echo "[3/6] Recreate containers (backend/frontend only)"
+            docker compose up -d --no-deps --force-recreate backend frontend
 
-            echo "[4/7] Show running containers"
+            echo "[4/6] Show running containers"
             docker ps
 
-            echo "[5/7] Show compose status"
+            echo "[5/6] Show compose status"
             docker compose ps
 
-            echo "[6/7] Show last logs (backend)"
+            echo "[6/6] Show last logs (backend)"
             docker logs hkt-backend --tail 50 || true
-
-            echo "[7/7] Show last logs (ai)"
-            docker logs hkt-ai --tail 50 || true
