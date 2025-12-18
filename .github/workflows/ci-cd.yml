@@ -32,8 +32,6 @@ jobs:
 
       - name: Frontend build
         working-directory: apps/frontend
-        env:
-          VITE_API_BASE_URL: http://43.201.10.244:8080
         run: |
           npm ci
           npm run build
@@ -78,8 +76,6 @@ jobs:
           file: ./Dockerfile
           target: frontend
           push: true
-          build-args: |
-            VITE_API_BASE_URL=http://43.201.10.244:8080
           tags: |
             ${{ env.IMAGE_REPO }}-frontend:latest
             ${{ env.IMAGE_REPO }}-frontend:${{ github.sha }}

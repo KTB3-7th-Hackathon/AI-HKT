@@ -20,10 +20,6 @@ ENTRYPOINT ["java", "-jar", "/app/app.jar"]
 # Frontend build
 FROM node:20-alpine AS frontend-build
 WORKDIR /app
-
-ARG VITE_API_BASE_URL
-ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
-
 COPY apps/frontend/package*.json ./
 RUN npm ci
 COPY apps/frontend/ .
